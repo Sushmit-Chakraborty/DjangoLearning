@@ -1,0 +1,118 @@
+<html>
+<head>
+  <title>Voice Recognition Example</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <style>
+    body {
+    margin: 40px 0 0;
+    background: #91D1D3;
+    font-family: 'Roboto', sans-serif;
+}
+
+.paper {
+    position: relative;
+    width: 90%;
+    max-width: 800px;
+    min-width: 400px;
+    height: 480px;
+    margin: 0 auto;
+    background: #fafafa;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,.3);
+    overflow: hidden;
+}
+.paper:before {
+    content: '';
+    position: absolute;
+    top: 0; bottom: 0; left: 0;
+    width: 60px;
+    background: radial-gradient(#575450 6px, transparent 7px) repeat-y;
+    background-size: 30px 30px;
+    border-right: 3px solid #D44147;
+    box-sizing: border-box;
+}
+
+.paper-content {
+    position: absolute;
+    top: 30px; right: 0; bottom: 30px; left: 60px;
+    background: linear-gradient(transparent, transparent 28px, #91D1D3 28px);
+    background-size: 30px 30px;
+}
+
+.paper-content textarea {
+    width: 100%;
+    max-width: 100%;
+    height: 100%;
+    max-height: 100%;
+    line-height: 30px;
+    padding: 0 10px;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    color: mediumblue;
+    font-family: 'Handlee', cursive;
+    font-weight: bold;
+    font-size: 18px;
+    box-sizing: border-box;
+    z-index: 1;
+}
+  </style>
+</head>
+<body>
+  <h1 style="text-align: center;font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;">Voice Recognition</h1>
+  <div style="text-align: center;margin-bottom: 20px;">
+  <button id="startButton" style="font-size:24px;border-radius: 5px;background-color: red;color: white;padding: 10px;padding-left: 20px;padding-right:20px ;"> <i class="fa fa-microphone"></i></button>
+    </div>
+  <form method="post" action="/inputData/data">
+    {% csrf_token %}
+<div class="paper">
+    <div class="paper-content">
+        <textarea id="result" name="result"></textarea>
+    </div>
+</div>
+<div style="text-align: center;margin-top: 20px;">
+  <input type="submit" style="font-size:15px;border-radius: 5px;background-color: red;color: white;padding: 10px;padding-left: 20px;padding-right:20px ;" value="Submit">
+</div>
+  </form>
+  <script>
+  const startButton = document.getElementById('startButton');
+  const resultParagraph = document.getElementById('result');
+
+
+  // Creating a SpeechRecognition object
+  const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+
+
+  recognition.lang = 'en-US'; // Set the language for recognition
+
+
+  // Event handler when recognition starts
+  recognition.onstart = () => {
+    startButton.textContent = 'Listening...';
+  };
+
+
+  // Event handler when recognition produces a result
+  recognition.onresult = (event) => {
+    const result = event.results[0][0].transcript;
+    resultParagraph.textContent = result;
+  };
+
+
+  // Event handler when recognition ends
+  recognition.onend = () => {
+    startButton.innerHTML = '<i class="fa fa-microphone">';
+  };
+
+
+  // Event listener for the button click
+  startButton.addEventListener('click', () => {
+    if (recognition && recognition.continuous) {
+      recognition.stop();
+    } else {
+      recognition.start();
+    }
+  });
+</script>
+</body>
+</html>
